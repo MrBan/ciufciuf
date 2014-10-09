@@ -37,13 +37,13 @@ class TrenitaliaSearch:
 		self.searchHost = "www.lefrecce.it"
 		self.searchPath = "/B2CWeb/searchExternal.do?parameter=initBaseSearch"
 
-	def SearchTrain(self, dep, arr, date, time):
+	def SearchTrain(self, dep, arr, date, time, nAdults='1'):
 		params = urllib.urlencode({'isRoundTrip': 'false',
 					   'departureStation': dep,
 					   'arrivalStation': arr,
 					   'departureDate': date,
 					   'departureTime': time,
-					   'noOfAdults': '1',
+					   'noOfAdults': nAdults,
 					   'selectedTrainType': 'frecce',
 					   'noOfChildren': '0'})
 		headers = {"Content-type": "application/x-www-form-urlencoded",
