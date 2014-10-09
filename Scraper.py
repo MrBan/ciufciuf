@@ -1,6 +1,7 @@
 import httplib
 import urllib
 from urlparse import urlparse, parse_qs
+from bs4 import BeautifulSoup
 import re
 
 # create a subclass and override the handler methods
@@ -18,7 +19,7 @@ class TrenitaliaParser():
 				arrTd = tds[1]
 				durTd = tds[2]
 				trainTd = tds[3]
-				priceTd = tds[4]
+				priceTd = tds[5]
 				
 				opt = dict()
 				opt["depTime"] = depTd.span.string
@@ -27,6 +28,7 @@ class TrenitaliaParser():
 				tmp = re.sub(r'[\t\n]*', '', trainTd.div.span.getText()).split()
 				opt["trainType"] = tmp[0]
 				opt["trainCode"] = tmp[1]
+				opt["price"] = re.sub(r'[\s]', '', priceTd.span.get_text())[:-1]
 				self.result.append(opt)
 		return self.result
 
@@ -78,7 +80,7 @@ if __name__ == "__main__":
 
 	parser = TrenitaliaParser(html)
 	result = parser.getResults()
-	f = 'type: {0}({1})\tleave: {2}\tarrive: {3}\tduration: {4}'
+	f = 'type: {0}({1})\tleave: {2}\tarrive: {3}\tduration: {4}\tprice: {5}'
 	for x in result:
 		print f.format(x['trainType'], x['trainCode'], x['depTime'],
-				x['arrTime'], x['duration'])
+				x['arrTime'], x['duration'], x['price'])
