@@ -1,4 +1,4 @@
-"""Trenitalia _result parser"""
+"""Trenitalia result parser"""
 
 from bs4 import BeautifulSoup
 import re
@@ -17,8 +17,8 @@ class TrenitaliaParser(object):
         """Parse Trenitalia result page html
 
         Returns:
-            A list of dicts containing all the train solutions with their
-            prices. Each element of the list is in the following form:
+            A list of dicts. Each element of the list represents a train
+            solution and has the following structure:
             {
                 'trainType': 'FRECCIAROSSA',
                 'depTime': '15:12',
@@ -33,16 +33,14 @@ class TrenitaliaParser(object):
                             {
                                 'comfort': 'STANDARD',
                                 'price': '40.00'
-                            },
-                            {
+                            }, {
                                 'comfort': 'PREMIUM',
                                 'price': '40.00'
                             },
                             ...
                             ...
                         ]
-                    },
-                    {
+                    }, {
                         'fareType': 'ECONOMY',
                         'farePrices': [
                             ...
@@ -100,7 +98,7 @@ class TrenitaliaParser(object):
                     # BASE, ECONOMY ...
                     pr_res["fareType"] = tds[0].span.string.strip()
                     pr_res["farePrices"] = list()
-                    for i in range(1, 7):
+                    for i in range(1, len(COMFORTS) + 1):
                         if not tds[i].span:
                             tmp = "none"
                         else:
