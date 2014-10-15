@@ -13,7 +13,23 @@ class TrenitaliaSearch(object):
         self._search_path = "/B2CWeb/searchExternal.do?parameter=initBaseSearch"
 
     def search_train(self, config):
-        """perform search"""
+        """Search train solutions
+
+        Perform search request on Trenitalia Web service. For the moment the
+        result includes only the first page.
+
+        Args:
+            config: a dictionary containing search parameters. For example:
+                {
+                    'dep': 'Milano Centrale',
+                    'arr': 'Bologna Centrale',
+                    'date': '15-10-2014',
+                    'nAdults': '1',
+                }
+
+        Returns:
+            An object containing the HTML code of the result page.
+        """
 
         params = urllib.urlencode({'isRoundTrip': 'false',
                                    'departureStation': config["dep"],
@@ -24,8 +40,8 @@ class TrenitaliaSearch(object):
                                    'selectedTrainType': 'frecce',
                                    'noOfChildren': '0'})
         headers = {"Content-type": "application/x-www-form-urlencoded",
-               "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9"
-               ",image/webp,*/*;q=0.8"}
+                   "Accept": "text/html,application/xhtml+xml,application/xml;"
+                             "q=0.9,image/webp,*/*;q=0.8"}
 
         # first request to get Session code
         conn = httplib.HTTPSConnection(self._search_host)
