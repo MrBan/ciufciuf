@@ -4,15 +4,14 @@ import urllib
 import httplib
 from urlparse import urlparse
 
-
 class TrenitaliaSearch(object):
     """Trenitalia Search Class"""
 
     def __init__(self):
         self._search_host = "www.lefrecce.it"
-        self._search_path = "/B2CWeb/searchExternal.do?parameter=initBaseSearch"
+        self._init_path = "/B2CWeb/searchExternal.do?parameter=initBaseSearch"
 
-    def search_train(self, config):
+    def get_page(self, config):
         """Search train solutions
 
         Perform search request on Trenitalia Web service. For the moment the
@@ -28,7 +27,7 @@ class TrenitaliaSearch(object):
                 }
 
         Returns:
-            An object containing the HTML code of the result page.
+            An object containing the HTML code of the first result page.
         """
 
         params = urllib.urlencode({'isRoundTrip': 'false',
@@ -46,7 +45,7 @@ class TrenitaliaSearch(object):
         # first request to get Session code
         conn = httplib.HTTPSConnection(self._search_host)
 
-        conn.request("POST", self._search_path, params, headers)
+        conn.request("POST", self._init_path, params, headers)
         resp = conn.getresponse()
         location = resp.getheader("location")
         cookie = resp.getheader("set-cookie")
@@ -60,4 +59,10 @@ class TrenitaliaSearch(object):
         html = resp.read()
         conn.close()
 
+        return html
+
+    def get_next_page(self):
+        """Get next result page"""
+        # TODO
+        html = ""
         return html

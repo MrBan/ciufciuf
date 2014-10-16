@@ -1,19 +1,35 @@
-"""Trenitalia result parser"""
+"""Trenitalia Service Module"""
 
+from TrenitaliaSearch import TrenitaliaSearch
 from bs4 import BeautifulSoup
 import re
-
-COMFORTS = ["STANDARD", "PREMIUM", "BUISNESS SALOTTINO",
-            "BUISNESS AREA SILENZIO", "BUISNESS", "EXECUTIVE"]
 
 class TrenitaliaParser(object):
     """Trenitalia result parser Class"""
 
-    def __init__(self, html):
-        self._result = list()
-        self._soup = BeautifulSoup(html)
+    COMFORTS = ["STANDARD", "PREMIUM", "BUSINESS SALOTTINO",
+                "BUSINESS AREA SILENZIO", "BUSINESS", "EXECUTIVE"]
 
-    def get_results(self):
+    def __init__(self):
+        self._result = list()
+        self._searcher = TrenitaliaSearch()
+
+    def find_page(self, config):
+        """Returns only the first result page"""
+        html = self._searcher.get_page(config)
+        self._parse_page(html)
+        return self._result
+
+    def find_all(self, config):
+        """Returns all result pages"""
+        # TODO
+        # html = self._searcher.get_page(config)
+        # self._parse_page(html)
+        # while self._searcher.get_next():
+        #     self._parse_page(html)
+        return self._result
+
+    def _parse_page(self, html):
         """Parse Trenitalia result page html
 
         Returns:
@@ -35,7 +51,7 @@ class TrenitaliaParser(object):
                                 'price': '40.00'
                             }, {
                                 'comfort': 'PREMIUM',
-                                'price': '40.00'
+                                'price': '50.00'
                             },
                             ...
                             ...
@@ -51,9 +67,10 @@ class TrenitaliaParser(object):
                 ]
             }
         """
+        soup = BeautifulSoup(html)
 
         # result table
-        table = self._soup.find("table", class_="searchResult")
+        table = soup.find("table", class_="searchResult")
         for res_tr in table.find_all("tr"):
             if not ("id" in res_tr.attrs and res_tr["id"].startswith("trow")):
                 continue
@@ -74,11 +91,16 @@ class TrenitaliaParser(object):
 
             opt["trainType"] = tmp[0]
 
+            # departure time is in the following day
+            if dep_td.span.string.endswith("*"):
+                break
+
             opt["depTime"] = dep_td.span.string
             opt["arrTime"] = arr_td.span.string
             opt["duration"] = dur_td.span.string
             opt["trainCode"] = tmp[1]
-            opt["minPrice"] = re.sub(r'[\s]', '', price_td.span.get_text())[:-1]
+            opt["minPrice"] = float(re.sub(r'[\s]', '',
+                                    price_td.span.get_text())[:-1])
             opt["prices"] = list()
             for sib in res_tr.find_next_siblings("tr"):
                 if not ("id" in sib.attrs and sib["id"].startswith("sd_")):
@@ -98,19 +120,19 @@ class TrenitaliaParser(object):
                     # BASE, ECONOMY ...
                     pr_res["fareType"] = tds[0].span.string.strip()
                     pr_res["farePrices"] = list()
-                    for i in range(1, len(COMFORTS) + 1):
+                    for i in range(1, len(self.COMFORTS) + 1):
                         if not tds[i].span:
-                            tmp = "none"
+                            tmp = "N/A"
                         else:
                             tmp = re.sub(r'[\s]', '', tds[i].span.get_text())
                             if tmp == "SoldOut":
-                                tmp = "none"
+                                tmp = "N/A"
                             else:
-                                tmp = tmp[:-1]
-                        pr_res["farePrices"].append({"comfort": COMFORTS[i-1],
-                                                     "price": tmp})
+                                tmp = float(tmp[:-1])
+                        pr_res["farePrices"].append({
+                                                "comfort": self.COMFORTS[i-1],
+                                                "price": tmp})
 
                     opt["prices"].append(pr_res)
                 break
             self._result.append(opt)
-        return self._result
