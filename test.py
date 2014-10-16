@@ -1,29 +1,31 @@
 #!/usr/bin/env python
-
 """Trenitalia test module"""
 
-from TrenitaliaSearch import TrenitaliaSearch
+from tabulate import tabulate
+
 from TrenitaliaParser import TrenitaliaParser
 
 if __name__ == "__main__":
-    TS = TrenitaliaSearch()
-    HTML = TS.search_train({"dep": "Milano Centrale",
-                           "arr": "Bologna Centrale",
-                           "date": "18-10-2014",
-                           "time": "15",
-                           "nAdults": "1"})
-    F = open("sample.html", "w")
-    F.write(HTML)
-    F.close()
+    MYTRAINCODE = "9553"
+    TP = TrenitaliaParser()
 
-    PARSER = TrenitaliaParser(HTML)
-    RES = PARSER.get_results()
-    # f = 'type: {0}({1})\tleave: {2}\tarrive: {3}\tduration: {4}\tprice: {5}'
-    # for x in result:
-    #   print f.format(x['trainType'], x['trainCode'], x['depTime'],
-    #           x['arrTime'], x['duration'], x['minPrice'])
-    X = RES[0]
-    for y in X["prices"]:
-        print "type: " + y["fareType"]
-        for z in y["farePrices"]:
-            print "\ttype: " + z["comfort"] + "\t price: " + z["price"]
+    RES = TP.find_page({"dep": "Milano Centrale",
+                        "arr": "Firenze S. M. Novella",
+                        "date": "18-10-2014",
+                        "time": "18",
+                        "nAdults": "1"})
+
+    for train in RES:
+        if train["trainCode"] == MYTRAINCODE:
+            print "Train Code:\t" + train["trainCode"]
+            print "Departure:\t" + train["depTime"]
+            print "Arrival:\t" + train["arrTime"]
+            print "Duration:\t" + train["duration"]
+            table = list()
+            for pr in train["prices"]:
+                row = [pr["fareType"]]
+                for x in pr["farePrices"]:
+                    row.append(x["price"])
+                table.append(row)
+            print
+            print tabulate(table, headers=TP.COMFORTS)
