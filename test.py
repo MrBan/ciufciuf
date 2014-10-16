@@ -3,11 +3,11 @@
 
 from tabulate import tabulate
 
-from TrenitaliaParser import TrenitaliaParser
+from Trenitalia import Trenitalia
 
 if __name__ == "__main__":
     MYTRAINCODE = "9553"
-    TP = TrenitaliaParser()
+    TP = Trenitalia()
 
     RES = TP.find_page({"dep": "Milano Centrale",
                         "arr": "Firenze S. M. Novella",

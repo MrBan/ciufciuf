@@ -4,7 +4,7 @@ from TrenitaliaSearch import TrenitaliaSearch
 from bs4 import BeautifulSoup
 import re
 
-class TrenitaliaParser(object):
+class Trenitalia(object):
     """Trenitalia result parser Class"""
 
     COMFORTS = ["STANDARD", "PREMIUM", "BUSINESS SALOTTINO",
