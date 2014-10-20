@@ -23,6 +23,7 @@ class TrenitaliaSearch(object):
                     'dep': 'Milano Centrale',
                     'arr': 'Bologna Centrale',
                     'date': '15-10-2014',
+                    'time': '08',
                     'nAdults': '1',
                 }
 
