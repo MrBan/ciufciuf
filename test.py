@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 """Trenitalia test module"""
 
-from tabulate import tabulate
 from datetime import date, timedelta
 
 from Trenitalia import Trenitalia
