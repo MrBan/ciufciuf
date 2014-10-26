@@ -58,6 +58,11 @@ class TrenitaliaSearch(object):
                      headers={'Cookie': cookie})
         resp = conn.getresponse()
         html = resp.read()
+
+        # f = open("sample.html", "w")
+        # f.write(html)
+        # f.close()
+
         conn.close()
 
         return html
