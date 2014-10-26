@@ -56,6 +56,11 @@ class Trenitalia(object):
             }
         """
         html = self._searcher.get_page(self._config)
+
+        # f = open("sample.html", "r")
+        # html = f.read()
+        # f.close
+
         self._parse_page(html)
         return self._result
 
