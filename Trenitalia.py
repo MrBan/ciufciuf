@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Trenitalia Service Module"""
 
 from TrenitaliaSearch import TrenitaliaSearch
