@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """Trenitalia test module"""
 
 from datetime import date, timedelta
@@ -6,9 +6,11 @@ from datetime import date, timedelta
 from Trenitalia import Trenitalia
 
 def daterange(start_date, end_date):
-    for n in range(int ((end_date - start_date).days)):
-        yield start_date + timedelta(n)
+    """Datarange generator"""
+    for day in range(int((end_date - start_date).days)):
+        yield start_date + timedelta(day)
 
+# find the first SUPER ECONOMY solution for 9502 train in the next 30 days
 if __name__ == "__main__":
     START = date.today()
     END = START + timedelta(30)
@@ -30,7 +32,10 @@ if __name__ == "__main__":
                 if pr["fareType"] == "SUPER ECONOMY":
                     for x in pr["farePrices"]:
                         if x["price"] != "N/A":
-                            print (d.strftime("%A %d %B %Y") + " " + x["comfort"]+ " " +str(x["price"]))
+                            form = "%A %d %B %Y"
+                            print "{0} {1} {2}".format(d.strftime(form),
+                                                       x["comfort"],
+                                                       str(x["price"]))
                             break
                     else:
                         continue
